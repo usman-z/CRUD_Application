@@ -1,8 +1,6 @@
 package com.csc340.crud.application.student;
 
 import java.util.List;
-import java.util.Optional;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,12 +14,12 @@ public class StudentService {
 		return studentRepository.findAll();
 	}
 	
-	public Optional<Student> getStudent(int id) {
-		return studentRepository.findById(id);
+	public Student getStudent(int id) {
+		return studentRepository.getReferenceById(id);
 	}
 	
-	public Student addStudent(Student newStudent) {
-		return studentRepository.save(newStudent);
+	public void saveStudent(Student newStudent) {
+		studentRepository.save(newStudent);
 	}
 	
 	public void updateStudent(Student student) {

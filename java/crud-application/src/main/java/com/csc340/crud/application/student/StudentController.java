@@ -1,17 +1,15 @@
 package com.csc340.crud.application.student;
 
-import java.util.List;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 
-@RestController
+@Controller
 @RequestMapping("/student")
 public class StudentController {
 
@@ -19,30 +17,48 @@ public class StudentController {
 	StudentService studentService;
 
 	
-	@GetMapping("/get")
-	public List<Student> getStudents() {
-		return studentService.getStudents();
+	@GetMapping("/all")
+	public String getStudents(Model model) {
+        model.addAttribute("studentList",
+        		studentService.getStudents());
+        return "student/list-students";
 	}
 	
-	@GetMapping("/get/{studentId}")
-	public Optional<Student> getStudentById(@PathVariable int studentId) {
-		return studentService.getStudent(studentId);
-	}
+    @GetMapping("/id={studentId}")
+    public String getStudent(@PathVariable int studentId, Model model) {
+        model.addAttribute("student",
+        		studentService.getStudent(studentId));
+        return "student/student-detail";
+    }
 	
-	@PostMapping("/add")
-	public Student addStudent(@RequestBody Student newStudent) {
-		return studentService.addStudent(newStudent);
-	}
+    @PostMapping("/create")
+    public String createStudent(Student student) {
+    	studentService.saveStudent(student);
+        return "redirect:/student/all";
+    }
 	
-	@PostMapping("/update/{studentId}")
-	public void updateStudent(@RequestBody Student student, @PathVariable int studentId) {
-		studentService.deleteStudent(studentId);
-		studentService.updateStudent(student);
-	}
+    @PostMapping("/update")
+    public String updateStudent(Student student) {
+    	studentService.saveStudent(student);
+        return "redirect:/student/all";
+    }
 	
-	@GetMapping("/delete/{studentId}")
-	public void deleteStudentById(@PathVariable int studentId) {
-		studentService.deleteStudent(studentId);
-	}
-
+	
+    @GetMapping("/delete/id={studentId}")
+    public String deleteStudent(@PathVariable int studentId, Model model) {
+    	studentService.deleteStudent(studentId);
+        return "redirect:/student/all";
+    }
+    
+    @GetMapping("/new-student")
+    public String newStudentForm(Model model) {
+        return "student/new-student";
+    }
+    
+    @GetMapping("/update/id={studentId}")
+    public String updateStudentForm(@PathVariable int studentId, Model model) {
+        model.addAttribute("student",
+        		studentService.getStudent(studentId));
+        return "student/update-student";
+    }
 }
